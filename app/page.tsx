@@ -1,7 +1,18 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    fetch("/api/py/helloFastApi")
+      .then((res) => res.json())
+      .then((data) => {
+        setData(data);
+        console.log(data);
+      });
+  }, []);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
