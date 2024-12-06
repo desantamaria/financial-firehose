@@ -11,6 +11,7 @@ export default function Chat() {
   const [input, setInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -18,15 +19,23 @@ export default function Chat() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsLoading(true);
+    setInput("");
+    const newUserMessage = {
+      role: "user",
+      content: input,
+    } as Message;
+    const newMessage = [...messages, newUserMessage];
+    setMessages(newMessage);
 
     fetch(`/api/py/perform_rag/${input}`)
       .then((res) => res.json())
       .then((data) => {
-        setMessages([...messages, data]);
+        setMessages([...newMessage, data]);
         console.log(data);
-      });
 
-    // result = await fetch('api/')
+        setIsLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -58,6 +67,7 @@ export default function Chat() {
           className="fixed bottom-0 w-[calc(100%-var(--sidebar-width))] max-w-2xl bg-white px-4 pb-16 z-10"
         >
           <input
+            disabled={isLoading ? true : false}
             value={input}
             onChange={(e) => {
               setInput(e.target.value);
