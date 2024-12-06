@@ -40,9 +40,9 @@ def get_huggingface_embeddings(text, model_name="sentence-transformers/all-mpnet
     model = SentenceTransformer(model_name)
     return model.encode(text)
 
-@app.get("/api/py/helloFastApi")
-def hello_fast_api():
-    query = "Tell me about companies who manufacture appliances."
+@app.get("/api/py/perform_rag/{query}")
+async def perform_rag(query):
+    # query = "Tell me about companies who manufacture appliances."
     raw_query_embedding = get_huggingface_embeddings(query)
     top_matches = pinecone_index.query(vector=raw_query_embedding.tolist(), top_k=10, include_metadata=True, namespace="stock-descriptions")
 
@@ -107,4 +107,4 @@ def hello_fast_api():
         ]
     )
     result = llm_response.choices[0].message.content
-    return {"message": result}
+    return {"role": "system" ,"content": result}
