@@ -43,6 +43,7 @@ export default function Chat() {
     fetch(`/api/py/perform_scrape`)
       .then((res) => res.json())
       .then((data) => {
+        setMessages([...messages, ...data]);
         console.log(data);
 
         // setIsLoading(false);
@@ -72,9 +73,8 @@ export default function Chat() {
               >
                 <div
                   className={`rounded-lg px-4 py-2 ${message.role === "user" ? "bg-blue-200" : "bg-gray-200"}`}
-                >
-                  {message.content}
-                </div>
+                  dangerouslySetInnerHTML={{ __html: message.content }}
+                ></div>
               </div>
             ))}
           <div ref={messagesEndRef} />

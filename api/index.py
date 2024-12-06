@@ -76,7 +76,65 @@ async def perform_scrape_endpoint():
 
     s = soup.find('div', class_='entry-content')
     content = soup.find_all('p')
-    print(content)
+    
+    article_text = " ".join([c.text for c in content])
+    # print(article_text)
+    
+    prompt = f"""
+        You are an expert financial analyst.
+        
+        Based on the text in the article below, return a list of stock tickers that are related to the article.
+        
+        ‹article_text> 
+            {article_text}
+        </article_text>
+        
+        Return your response in format like this example:
+            Tickers: "AAPL", "TSLA", "MSFT"
+        
+        Above the response please provide a link in html tag with the href containing the link of the article: {urls[0]}
+        Below is an example for the html link:
+        
+        Provided Article: newline character
+        <a href="https://www.thenewsapi.com/documentation">https://www.thenewsapi.com/documentation</a>
+        
+        Please allow for some newline characters after the link element
+        
+        Please carefully process step by step.
+        
+    """
+    
+    prompt2 = f"""
+        You are an expert financial analyst.
+        
+        ‹article_text> 
+            {article_text}
+        </article_text>
+        
+        Based on the text in the article below, Give the sentiment value whether positive or negative financially speaking.
+        
+        ‹article_text> 
+            {article_text}
+        </article_text>
+        Please carefully process step by step.
+    """
+    # Groq's Llama 3.1 API call
+    llm_response = groq_client.chat.completions.create(
+        model="llama-3.1-70b-versatile",
+        messages=[
+            {"role": "system", "content": prompt},
+        ]
+    )
+    
+    llm_response2 = groq_client.chat.completions.create(
+        model="llama-3.1-70b-versatile",
+        messages=[
+            {"role": "system", "content": prompt2},
+        ]
+    )
+    result = llm_response.choices[0].message.content
+    result2 = llm_response2.choices[0].message.content
+    return [{"role": "system" ,"content": result}, {"role": "system" ,"content": result2}]
 
     # return {"Content": content}
 
