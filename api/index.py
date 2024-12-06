@@ -22,6 +22,7 @@ app = FastAPI(docs_url="/api/py/docs", openapi_url="/api/py/openapi.json")
 load_dotenv()
 PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+NEWS_API_KEY = os.getenv("NEWS_API_KEY")
 
 # Initialize Groq
 groq_client = OpenAI(
@@ -53,7 +54,7 @@ async def perform_scrape_endpoint():
     conn = http.client.HTTPSConnection('api.thenewsapi.com')
 
     params = urllib.parse.urlencode({
-        'api_token': 'HkLhCSS2uSFlEjFBGzOMWU2bsHvf3Wd0irKkWIjT',
+        'api_token': NEWS_API_KEY,
         'language': 'en',
         'categories': 'business,tech',
         'limit': 2,
