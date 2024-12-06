@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Button } from "./ui/button";
 
 export interface Message {
   role: "system" | "user";
@@ -38,12 +39,29 @@ export default function Chat() {
       });
   };
 
+  const handleClick = async () => {
+    fetch(`/api/py/perform_scrape`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+
+        // setIsLoading(false);
+      });
+  };
+
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
 
   return (
     <div className="flex-1 relative">
+      <Button
+        onClick={handleClick}
+        variant="outline"
+        className="absolute top-0 right-0 m-4"
+      >
+        Scrape News Articles
+      </Button>
       <div className="mx-auto max-w-2xl h-screen">
         <div className="h-[calc[100vh-180px] overflow-y-auto space-y-4 p-4 pb-40">
           {messages.length > 0 &&
@@ -64,7 +82,7 @@ export default function Chat() {
         <div className="fixed bottom-[76px] w-[calc(100%-var(--sidebar-width))] h-24 bg-grandient-to-t from-white via-white/100 to-transparent pointer-events-none max-w-2xl mx-auto" />
         <form
           onSubmit={handleSubmit}
-          className="fixed bottom-0 w-[calc(100%-var(--sidebar-width))] max-w-2xl bg-white px-4 pb-16 z-10"
+          className="fixed bottom-0 w-[calc(100%-var(--sidebar-width))] max-w-2xl bg-white px-4 pb-16 z-10 flex gap-2 items-center"
         >
           <input
             disabled={isLoading ? true : false}

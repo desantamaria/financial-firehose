@@ -7,6 +7,14 @@ from dotenv import load_dotenv
 import os
 from openai import OpenAI
 from pinecone import Pinecone
+import requests
+from bs4 import BeautifulSoup
+import os
+from openai import OpenAI
+from dotenv import load_dotenv
+import http.client, urllib.parse
+import json
+
 
 ### Create FastAPI instance with custom docs and openapi url
 app = FastAPI(docs_url="/api/py/docs", openapi_url="/api/py/openapi.json")
@@ -39,6 +47,38 @@ def fetch_from_pincone():
 def get_huggingface_embeddings(text, model_name="sentence-transformers/all-mpnet-base-v2"):
     model = SentenceTransformer(model_name)
     return model.encode(text)
+
+@app.get("/api/py/perform_scrape")
+async def perform_scrape_endpoint():
+    conn = http.client.HTTPSConnection('api.thenewsapi.com')
+
+    params = urllib.parse.urlencode({
+        'api_token': 'HkLhCSS2uSFlEjFBGzOMWU2bsHvf3Wd0irKkWIjT',
+        'language': 'en',
+        'categories': 'business,tech',
+        'limit': 2,
+        })
+
+    conn.request('GET', '/v1/news/all?{}'.format(params))
+
+    res = conn.getresponse()
+    data = res.read()
+    
+    # Decode the byte data to a string and then parse it as JSON
+    data = json.loads(data.decode('utf-8'))  # {{ edit_1 }}
+
+    # Extract URLs into a list
+    urls = [item['url'] for item in data['data']]
+    
+    r = requests.get(urls[0])
+
+    soup = BeautifulSoup(r.content, 'html.parser')
+
+    s = soup.find('div', class_='entry-content')
+    content = soup.find_all('p')
+    print(content)
+
+    # return {"Content": content}
 
 @app.get("/api/py/perform_rag/{query}")
 async def perform_rag(query):
