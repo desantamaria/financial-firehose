@@ -24,7 +24,7 @@ export default function RootLayout({
         <ConvexProvider client={convex}>
           <SidebarProvider>
             <AppSidebar />
-            <SidebarTrigger />
+            <SidebarTrigger className="fixed z-50" />
             {children}
           </SidebarProvider>
         </ConvexProvider>

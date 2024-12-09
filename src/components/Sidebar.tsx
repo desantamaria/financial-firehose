@@ -30,11 +30,11 @@ export function AppSidebar() {
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem className="flex justify-center items-center">
+              {/* <SidebarMenuItem className="flex justify-center items-center">
                 <Button onClick={handleClick} variant="outline">
                   Scrape News Articles
                 </Button>
-              </SidebarMenuItem>
+              </SidebarMenuItem> */}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

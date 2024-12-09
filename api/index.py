@@ -9,7 +9,6 @@ from openai import OpenAI
 from pinecone import Pinecone
 import requests
 from bs4 import BeautifulSoup
-import os
 from openai import OpenAI
 from dotenv import load_dotenv
 import http.client, urllib.parse
@@ -57,7 +56,7 @@ async def perform_scrape_endpoint():
         'api_token': NEWS_API_KEY,
         'language': 'en',
         'categories': 'business,tech',
-        'limit': 2,
+        'limit': 1,
         })
 
     conn.request('GET', '/v1/news/all?{}'.format(params))
@@ -79,7 +78,6 @@ async def perform_scrape_endpoint():
     content = soup.find_all('p')
     
     article_text = " ".join([c.text for c in content])
-    # print(article_text)
     
     prompt = f"""
         You are an expert financial analyst.
@@ -112,7 +110,7 @@ async def perform_scrape_endpoint():
             {article_text}
         </article_text>
         
-        Based on the text in the article below, Give the sentiment value whether positive or negative financially speaking.
+        Based on the text in the article below, Give the sentiment value whether positive or negative financially speaking. Rate it on a scale of 1-10 (negative to positive)
         
         ‹article_text> 
             {article_text}
